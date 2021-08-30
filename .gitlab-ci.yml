@@ -69,6 +69,8 @@ update:
     - ls -l
     - unzip Lib.zip
     - ls
+    - mkdir dist
+    - mv Lib dist/Lib
   # only:
   #   - web
 
