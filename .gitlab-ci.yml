@@ -5,7 +5,7 @@ image: node:14
 
 variables:
   SHOW_ALL: "true"
-  SHOW_LIB: "false"
+  SHOW_LIB: "true"
   SHOW_GAME_INFO: "false"
   LIB_ID: 242
 
@@ -68,7 +68,7 @@ show-var:
   stage: update
 
   script:
-    - $LIB eq "true" && $SHOW_LIB = "true"
+    - $LIB eq "true" && '$SHOW_LIB = "true"'
     - echo $LIB; echo $GAME_INFO; echo $GAME_RESULT
     - echo $SHOW_LIB; echo $SHOW_GAME_INFO; echo $SHOW_GAME_RESULT
 
