@@ -3,6 +3,9 @@
 # https://hub.docker.com/r/library/node/tags/
 image: node:14
 
+variables:
+  LIB_ID: 242
+
 before_script:
   ##
   ## Install ssh-agent if not already installed, it is required by Docker.
@@ -54,7 +57,17 @@ before_script:
   - git config --global user.email "kaichiang@starcrown.asia"
   - git config --global user.name "Kai"
 
+update:
+  stage: .pre
+  script:
+    - echo $LIB; echo $GAMEINFO; echo $GAMERESULT
+    - curl --location --output Lib.zip --header "JOB-TOKEN:$CI_JOB_TOKEN" "http://gitlab.msslot.bet/api/v4/projects/$LIB_ID/jobs/artifacts/master/download?job=add-md5"
+    - ls -l
+  only:
+    - web
+
 deploy:
+  stage: deploy
   script:
     - git clone git@gitlab.msslot.bet:release/gamecommon.git dist
     # 移除所有 dist 下的檔案
@@ -67,5 +80,3 @@ deploy:
     - git add .
     - git commit -am "$CI_COMMIT_MESSAGE"
     - git push origin master
-    
-  when: manual
