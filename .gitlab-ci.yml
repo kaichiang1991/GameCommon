@@ -81,7 +81,7 @@ update-lib:
 update-game-info:
   stage: update
   script:
-    -ls
+    - ls
     - mkdir -p dist
     - curl --location --output $GAME_INFO_NAME.zip --header "JOB-TOKEN:$CI_JOB_TOKEN" "http://gitlab.msslot.bet/api/v4/projects/$GAME_INFO_ID/jobs/artifacts/master/download?job=build"
     - unzip $GAME_INFO_NAME.zip
