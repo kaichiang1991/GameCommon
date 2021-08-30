@@ -4,11 +4,10 @@
 image: node:14
 
 variables:
-  LIB: "true"
-  SHOW_ALL: "true"
-  SHOW_LIB: "true"
-  SHOW_GAME_INFO: "false"
+  LIB_NAME: "Lib"
   LIB_ID: 242
+  GAME_INFO_NAME: "GameInfo"
+  GAME_INFO_ID: 219
 
 # before_script:
   # ##
@@ -65,42 +64,14 @@ stages:
   - update
   - deploy
 
-show-var:
-  stage: update
-
-  rules:
-    - if: $LIB == "true"
-      variables:
-        SHOW_LIB: "true"
-  script:
-    - $LIB == "true" && 'SHOW_LIB = "true"'
-    - echo $LIB; echo $GAME_INFO; echo $GAME_RESULT
-    - echo $SHOW_LIB; echo $SHOW_GAME_INFO; echo $SHOW_GAME_RESULT
-
-
 update-lib:
   stage: update
-  rules:
-    - if: $SHOW_LIB == "true"
-
   script:
     - mkdir -p dist
-    - curl --location --output Lib.zip --header "JOB-TOKEN:$CI_JOB_TOKEN" "http://gitlab.msslot.bet/api/v4/projects/$LIB_ID/jobs/artifacts/master/download?job=add-md5"
-    - unzip Lib.zip
-    - mv Lib dist/Lib
-    
-update-game-info:
-  stage: update
-  rules:
-    - if: $SHOW_GAME_INFO == "true"
+    - curl --location --output $LIB_NAME.zip --header "JOB-TOKEN:$CI_JOB_TOKEN" "http://gitlab.msslot.bet/api/v4/projects/$LIB_ID/jobs/artifacts/master/download?job=add-md5"
+    - unzip $LIB_NAME.zip
+    - mv $LIB_NAME dist/$LIB_NAME
 
-  script:
-    - echo "update-gameInfo"
-    - mkdir -p dist
-    - curl --location --output GameResult.zip --header "JOB-TOKEN:$CI_JOB_TOKEN" "http://gitlab.msslot.bet/api/v4/projects/$LIB_ID/jobs/artifacts/master/download?job=add-md5"
-    - ls
-    - unzip GameResult.zip
-    - mv Lib dist/Lib
 
 #   # only:
 #   #   - web
