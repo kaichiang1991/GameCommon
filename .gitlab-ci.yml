@@ -57,6 +57,10 @@ before_script:
   - git config --global user.email "kaichiang@starcrown.asia"
   - git config --global user.name "Kai"
 
+stages:
+  - .pre
+  - deploy
+  
 update:
   stage: .pre
   script:
