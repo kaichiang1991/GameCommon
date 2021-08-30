@@ -58,11 +58,11 @@ variables:
   # - git config --global user.name "Kai"
 
 stages:
-  - .pre
+  - a
   - deploy
 
 show-var:
-  stage: .pre
+  stage: a
   script:
     - echo $LIB; echo $GAME_INFO; echo $GAME_RESULT
   # only: 
