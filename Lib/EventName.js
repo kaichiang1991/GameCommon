@@ -1,0 +1,17 @@
+var eEventName;
+(function (eEventName) {
+    eEventName["touchAndContinue"] = "touchAndContinue";
+    eEventName["orientationChange"] = "orientationChange";
+    eEventName["setMusicVolume"] = "setMusicVolume";
+    eEventName["setEffectVolume"] = "setEffectVolume";
+    eEventName["startSpin"] = "startSpin";
+    eEventName["stopSpin"] = "stopSpin";
+    eEventName["betModelChange"] = "betModelChange";
+    eEventName["gameStateChange"] = "gameStateChange";
+    eEventName["openGameInfo"] = "openGameInfo";
+    eEventName["openHistory"] = "openHistory";
+    eEventName["exitGame"] = "exitGame";
+    eEventName["popupWindow"] = "popupWindow";
+    eEventName["closeWindow"] = "closeWindow";
+    eEventName["receiveServerData"] = "receiveServerData";
+})(eEventName || (eEventName = {}));
