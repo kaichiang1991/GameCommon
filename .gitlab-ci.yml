@@ -66,17 +66,13 @@ stages:
 
 show-var:
   stage: update
-  rules:
-  - if: $LIB == "true"
-    variables:
-      SHOW_LIB: "true"
 
   script:
+    - $LIB == "true" && SHOW_LIB = "true"
     - echo $LIB; echo $GAME_INFO; echo $GAME_RESULT
     - echo $SHOW_LIB; echo $SHOW_GAME_INFO; echo $SHOW_GAME_RESULT
 
-  only: 
-    - web
+  when: manual
 
 update-lib:
   stage: update
