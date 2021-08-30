@@ -6,7 +6,7 @@ image: node:14
 variables:
   LIB_ID: 242
 
-before_script:
+# before_script:
   # ##
   # ## Install ssh-agent if not already installed, it is required by Docker.
   # ## (change apt-get to yum if you use an RPM-based image)
@@ -65,20 +65,20 @@ show-var:
   stage: .pre
   script:
     - echo $LIB; echo $GAME_INFO; echo $GAME_RESULT
-  # only: 
-  #   - web
+  only: 
+    - web
 
-# update-lib:
-#   stage: .pre
-#   script:
-#     - echo "update-lib"
-#     - mkdir -p dist
-#     - curl --location --output Lib.zip --header "JOB-TOKEN:$CI_JOB_TOKEN" "http://gitlab.msslot.bet/api/v4/projects/$LIB_ID/jobs/artifacts/master/download?job=add-md5"
-#     - unzip Lib.zip
-#     - mv Lib dist/Lib
-#   rules:
-#     - if: '$LIB != "true"'
-#       when: never
+update-lib:
+  stage: .pre
+  script:
+    - echo "update-lib"
+    - mkdir -p dist
+    - curl --location --output Lib.zip --header "JOB-TOKEN:$CI_JOB_TOKEN" "http://gitlab.msslot.bet/api/v4/projects/$LIB_ID/jobs/artifacts/master/download?job=add-md5"
+    - unzip Lib.zip
+    - mv Lib dist/Lib
+  rules:
+    - if: '$LIB != "true"'
+      when: never
 
 #   # only:
 #   #   - web
