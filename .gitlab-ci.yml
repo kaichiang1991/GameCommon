@@ -60,15 +60,17 @@ before_script:
 stages:
   - .pre
   - deploy
-  
+
 update:
   stage: .pre
   script:
     - echo $LIB; echo $GAMEINFO; echo $GAMERESULT
     - curl --location --output Lib.zip --header "JOB-TOKEN:$CI_JOB_TOKEN" "http://gitlab.msslot.bet/api/v4/projects/$LIB_ID/jobs/artifacts/master/download?job=add-md5"
     - ls -l
-  only:
-    - web
+    - unzip Lib.zip
+    - ls
+  # only:
+  #   - web
 
 deploy:
   stage: deploy
