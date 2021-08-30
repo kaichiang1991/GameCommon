@@ -1,9 +1,0 @@
-{
-    "blackAlpha": 0.5,
-    "portraitScale": 0.76,
-    "durationInterval": [2, 3, 3, 5],
-    "preDelay": 0.5,
-    "endDelay": 1,
-    "fadeoutDur": 1,
-    "afterFadeoutDelay": 0.5
-}
