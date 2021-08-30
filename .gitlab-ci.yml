@@ -7,55 +7,55 @@ variables:
   LIB_ID: 242
 
 before_script:
-  ##
-  ## Install ssh-agent if not already installed, it is required by Docker.
-  ## (change apt-get to yum if you use an RPM-based image)
-  ##
-  # 安裝 ssh-agent
-  - 'command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )'
-  ##
-  ## Run ssh-agent (inside the build environment)
-  ##
-  # 啟動 ssh-agent
-  - eval $(ssh-agent -s)
+  # ##
+  # ## Install ssh-agent if not already installed, it is required by Docker.
+  # ## (change apt-get to yum if you use an RPM-based image)
+  # ##
+  # # 安裝 ssh-agent
+  # - 'command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )'
+  # ##
+  # ## Run ssh-agent (inside the build environment)
+  # ##
+  # # 啟動 ssh-agent
+  # - eval $(ssh-agent -s)
 
-  ##
-  ## Add the SSH key stored in SSH_PRIVATE_KEY variable to the agent store
-  ## We're using tr to fix line endings which makes ed25519 keys work
-  ## without extra base64 encoding.
-  ## https://gitlab.com/gitlab-examples/ssh-private-key/issues/1#note_48526556
-  ##
-  # 從CI/CD variables 裡面讀取 ssh key
-  # 並用 ssh-add 用 ssh-agent 做代理
-  - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+  # ##
+  # ## Add the SSH key stored in SSH_PRIVATE_KEY variable to the agent store
+  # ## We're using tr to fix line endings which makes ed25519 keys work
+  # ## without extra base64 encoding.
+  # ## https://gitlab.com/gitlab-examples/ssh-private-key/issues/1#note_48526556
+  # ##
+  # # 從CI/CD variables 裡面讀取 ssh key
+  # # 並用 ssh-add 用 ssh-agent 做代理
+  # - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
 
-  ##
-  ## Create the SSH directory and give it the right permissions
-  ##
-  # 設定 ~/.ssh 權限
-  - mkdir -p ~/.ssh
-  - chmod 700 ~/.ssh
+  # ##
+  # ## Create the SSH directory and give it the right permissions
+  # ##
+  # # 設定 ~/.ssh 權限
+  # - mkdir -p ~/.ssh
+  # - chmod 700 ~/.ssh
 
-  ##
-  ## Use ssh-keyscan to scan the keys of your private server. Replace gitlab.com
-  ## with your own domain name. You can copy and repeat that command if you have
-  ## more than one server to connect to.
-  ##
-  # 掃描 gitlab 位置的 ssh key
-  # 並輸出至 ~/.ssh/known_hosts
-  - ssh-keyscan gitlab.msslot.bet >> ~/.ssh/known_hosts
-  - chmod 644 ~/.ssh/known_hosts
-
-  ##
-  ## Alternatively, assuming you created the SSH_SERVER_HOSTKEYS variable
-  ## previously, uncomment the following two lines instead.
-  ##
-  # - echo "$SSH_SERVER_HOSTKEYS" > ~/.ssh/known_hosts
+  # ##
+  # ## Use ssh-keyscan to scan the keys of your private server. Replace gitlab.com
+  # ## with your own domain name. You can copy and repeat that command if you have
+  # ## more than one server to connect to.
+  # ##
+  # # 掃描 gitlab 位置的 ssh key
+  # # 並輸出至 ~/.ssh/known_hosts
+  # - ssh-keyscan gitlab.msslot.bet >> ~/.ssh/known_hosts
   # - chmod 644 ~/.ssh/known_hosts
 
-  # set git config
-  - git config --global user.email "kaichiang@starcrown.asia"
-  - git config --global user.name "Kai"
+  # ##
+  # ## Alternatively, assuming you created the SSH_SERVER_HOSTKEYS variable
+  # ## previously, uncomment the following two lines instead.
+  # ##
+  # # - echo "$SSH_SERVER_HOSTKEYS" > ~/.ssh/known_hosts
+  # # - chmod 644 ~/.ssh/known_hosts
+
+  # # set git config
+  # - git config --global user.email "kaichiang@starcrown.asia"
+  # - git config --global user.name "Kai"
 
 stages:
   - .pre
@@ -73,6 +73,10 @@ update:
     - mv Lib dist/Lib
   # only:
   #   - web
+  artifacts:
+    paths:
+      - dist
+    name: GameCommon
 
 deploy:
   stage: deploy
