@@ -61,16 +61,24 @@ stages:
   - .pre
   - deploy
 
-update:
+show-var:
   stage: .pre
   script:
-    - echo $LIB; echo $GAMEINFO; echo $GAMERESULT
+    - echo $LIB; echo $GAME_INFO; echo $GAME_RESULT
+  only: web
+
+update-lib:
+  stage: .pre
+  script:
+    - echo "update-lib"
+    - mkdir -p dist
     - curl --location --output Lib.zip --header "JOB-TOKEN:$CI_JOB_TOKEN" "http://gitlab.msslot.bet/api/v4/projects/$LIB_ID/jobs/artifacts/master/download?job=add-md5"
-    - ls -l
     - unzip Lib.zip
-    - ls
-    - mkdir dist
     - mv Lib dist/Lib
+  rules:
+    - if: '$LIB != "true"'
+      when: never
+      
   # only:
   #   - web
   artifacts:
@@ -78,17 +86,17 @@ update:
       - dist
     name: GameCommon
 
-deploy:
-  stage: deploy
-  script:
-    - git clone git@gitlab.msslot.bet:release/gamecommon.git dist
-    # 移除所有 dist 下的檔案
-    - rm -rf dist/*
-    # 把所有最後產出的檔案移至 dist
-    - mv GameInfo dist/GameInfo; mv GameResult dist/GameResult; mv img dist/img; mv js dist/js; mv Lib dist/Lib
-    ## 移至輸出目錄
-    ## 並讀取目前的 commit 紀錄
-    - cd dist
-    - git add .
-    - git commit -am "$CI_COMMIT_MESSAGE"
-    - git push origin master
+# deploy:
+#   stage: deploy
+#   script:
+#     - git clone git@gitlab.msslot.bet:release/gamecommon.git dist
+#     # 移除所有 dist 下的檔案
+#     - rm -rf dist/*
+#     # 把所有最後產出的檔案移至 dist
+#     - mv GameInfo dist/GameInfo; mv GameResult dist/GameResult; mv img dist/img; mv js dist/js; mv Lib dist/Lib
+#     ## 移至輸出目錄
+#     ## 並讀取目前的 commit 紀錄
+#     - cd dist
+#     - git add .
+#     - git commit -am "$CI_COMMIT_MESSAGE"
+#     - git push origin master
