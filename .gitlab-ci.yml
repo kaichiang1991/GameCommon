@@ -72,6 +72,21 @@ update-lib:
     - unzip $LIB_NAME.zip
     - mv $LIB_NAME dist/$LIB_NAME
 
+  artifacts:
+    paths:
+      - dist
+
+update-game-info:
+  stage: update
+  script:
+    - mkdir -p dist
+    - curl --location --output $GAME_INFO_NAME.zip --header "JOB-TOKEN:$CI_JOB_TOKEN" "http://gitlab.msslot.bet/api/v4/projects/$GAME_INFO_ID/jobs/artifacts/master/download?job=build"
+    - unzip $GAME_INFO_NAME.zip
+    - mv $GAME_INFO_NAME-master dist/$GAME_INFO_NAME
+
+  artifacts:
+    paths:
+      - dist
 
 #   # only:
 #   #   - web
