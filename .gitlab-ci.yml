@@ -66,23 +66,24 @@ stages:
 
 show-var:
   stage: update
+  rules:
+  - if: $LIB == "true"
+    variables:
+      SHOW_LIB: "true"
+
   script:
     - echo $LIB; echo $GAME_INFO; echo $GAME_RESULT
+    - echo $SHOW_LIB; echo $SHOW_GAME_INFO; echo $SHOW_GAME_RESULT
+
   only: 
     - web
 
 update-lib:
   stage: update
   rules:
-    # - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
-    #   variables:                              # Override DEPLOY_VARIABLE defined
-    #     DEPLOY_VARIABLE: "deploy-production"  # at the job level.
-    - if: $LIB == "true"
-      variables:
-        SHOW_LIB: "true"
+    - if: $SHOW_LIB == "true"
+
   script:
-    - echo "update-lib"
-    - echo $SHOW_LIB
     - mkdir -p dist
     - curl --location --output Lib.zip --header "JOB-TOKEN:$CI_JOB_TOKEN" "http://gitlab.msslot.bet/api/v4/projects/$LIB_ID/jobs/artifacts/master/download?job=add-md5"
     - unzip Lib.zip
@@ -90,15 +91,17 @@ update-lib:
     
 update-game-info:
   stage: update
+  rules:
+    - if: $SHOW_GAME_INFO == "true"
+
   script:
     - echo "update-gameInfo"
     - mkdir -p dist
-    - curl --location --output Lib.zip --header "JOB-TOKEN:$CI_JOB_TOKEN" "http://gitlab.msslot.bet/api/v4/projects/$LIB_ID/jobs/artifacts/master/download?job=add-md5"
-    - unzip Lib.zip
+    - curl --location --output GameResult.zip --header "JOB-TOKEN:$CI_JOB_TOKEN" "http://gitlab.msslot.bet/api/v4/projects/$LIB_ID/jobs/artifacts/master/download?job=add-md5"
+    - ls
+    - unzip GameResult.zip
     - mv Lib dist/Lib
-  rules:
-    - if: '$GAME_INFO != "true"'
-      when: never
+
 #   # only:
 #   #   - web
 #   artifacts:
