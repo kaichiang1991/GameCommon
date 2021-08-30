@@ -65,7 +65,8 @@ show-var:
   stage: .pre
   script:
     - echo $LIB; echo $GAME_INFO; echo $GAME_RESULT
-  only: web
+  only: 
+    - web
 
 update-lib:
   stage: .pre
@@ -78,7 +79,7 @@ update-lib:
   rules:
     - if: '$LIB != "true"'
       when: never
-      
+
   # only:
   #   - web
   artifacts:
