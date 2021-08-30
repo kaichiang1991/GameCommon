@@ -4,6 +4,7 @@
 image: node:14
 
 variables:
+  LIB: "true"
   SHOW_ALL: "true"
   SHOW_LIB: "true"
   SHOW_GAME_INFO: "false"
