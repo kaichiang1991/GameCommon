@@ -5,11 +5,8 @@ image: node:14
 
 variables:
   LIB_NAME: "Lib"
-  LIB_ID: 242
   GAME_INFO_NAME: "GameInfo"
-  GAME_INFO_ID: 219
   GAME_RESULT_NAME: "GameResult"
-  GAME_RESULT_ID: 222
 
 # before_script:
   # ##
@@ -70,7 +67,7 @@ update-lib:
   stage: update
   script:
     - mkdir -p dist
-    - curl --location --output $LIB_NAME.zip --header "JOB-TOKEN:$CI_JOB_TOKEN" "http://gitlab.msslot.bet/api/v4/projects/$LIB_ID/jobs/artifacts/master/download?job=add-md5"
+    - curl --location --output $LIB_NAME.zip --header "JOB-TOKEN:$CI_JOB_TOKEN" "http://gitlab.msslot.bet/api/v4/projects/$LIB_REPO_ID/jobs/artifacts/master/download?job=add-md5"
     - unzip $LIB_NAME.zip
     - mv $LIB_NAME dist/$LIB_NAME
 
@@ -83,7 +80,7 @@ update-game-info:
   script:
     - ls
     - mkdir -p dist
-    - curl --location --output $GAME_INFO_NAME.zip --header "JOB-TOKEN:$CI_JOB_TOKEN" "http://gitlab.msslot.bet/api/v4/projects/$GAME_INFO_ID/jobs/artifacts/master/download?job=build"
+    - curl --location --output $GAME_INFO_NAME.zip --header "JOB-TOKEN:$CI_JOB_TOKEN" "http://gitlab.msslot.bet/api/v4/projects/$GAMEINFO_REPO_ID/jobs/artifacts/master/download?job=build"
     - unzip $GAME_INFO_NAME.zip
     - mv $GAME_INFO_NAME dist/$GAME_INFO_NAME
 
@@ -98,7 +95,7 @@ update-game-result:
   stage: update
   script:
     - mkdir -p dist
-    - curl --location --output $GAME_RESULT_NAME.zip --header "JOB-TOKEN:$CI_JOB_TOKEN" "http://gitlab.msslot.bet/api/v4/projects/$GAME_RESULT_ID/jobs/artifacts/master/download?job=build"
+    - curl --location --output $GAME_RESULT_NAME.zip --header "JOB-TOKEN:$CI_JOB_TOKEN" "http://gitlab.msslot.bet/api/v4/projects/$GAMERESULT_REPO_ID/jobs/artifacts/master/download?job=build"
     - unzip $GAME_RESULT_NAME.zip
     - mv $GAME_RESULT_NAME dist/$GAME_RESULT_NAME
 
