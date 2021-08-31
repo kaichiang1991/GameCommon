@@ -88,9 +88,6 @@ update-game-info:
     paths:
       - dist
 
-  dependencies:
-    - update-lib
-
 update-game-result:
   stage: update
   script:
