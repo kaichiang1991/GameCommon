@@ -3,121 +3,74 @@
 # https://hub.docker.com/r/library/node/tags/
 image: node:14
 
-variables:
-  LIB_NAME: "Lib"
-  GAME_INFO_NAME: "GameInfo"
-  GAME_RESULT_NAME: "GameResult"
+before_script:
+  ##
+  ## Install ssh-agent if not already installed, it is required by Docker.
+  ## (change apt-get to yum if you use an RPM-based image)
+  ##
+  # 安裝 ssh-agent
+  - 'command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )'
+  ##
+  ## Run ssh-agent (inside the build environment)
+  ##
+  # 啟動 ssh-agent
+  - eval $(ssh-agent -s)
 
-# before_script:
-  # ##
-  # ## Install ssh-agent if not already installed, it is required by Docker.
-  # ## (change apt-get to yum if you use an RPM-based image)
-  # ##
-  # # 安裝 ssh-agent
-  # - 'command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )'
-  # ##
-  # ## Run ssh-agent (inside the build environment)
-  # ##
-  # # 啟動 ssh-agent
-  # - eval $(ssh-agent -s)
+  ##
+  ## Add the SSH key stored in SSH_PRIVATE_KEY variable to the agent store
+  ## We're using tr to fix line endings which makes ed25519 keys work
+  ## without extra base64 encoding.
+  ## https://gitlab.com/gitlab-examples/ssh-private-key/issues/1#note_48526556
+  ##
+  # 從CI/CD variables 裡面讀取 ssh key
+  # 並用 ssh-add 用 ssh-agent 做代理
+  - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
 
-  # ##
-  # ## Add the SSH key stored in SSH_PRIVATE_KEY variable to the agent store
-  # ## We're using tr to fix line endings which makes ed25519 keys work
-  # ## without extra base64 encoding.
-  # ## https://gitlab.com/gitlab-examples/ssh-private-key/issues/1#note_48526556
-  # ##
-  # # 從CI/CD variables 裡面讀取 ssh key
-  # # 並用 ssh-add 用 ssh-agent 做代理
-  # - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+  ##
+  ## Create the SSH directory and give it the right permissions
+  ##
+  # 設定 ~/.ssh 權限
+  - mkdir -p ~/.ssh
+  - chmod 700 ~/.ssh
 
-  # ##
-  # ## Create the SSH directory and give it the right permissions
-  # ##
-  # # 設定 ~/.ssh 權限
-  # - mkdir -p ~/.ssh
-  # - chmod 700 ~/.ssh
+  ##
+  ## Use ssh-keyscan to scan the keys of your private server. Replace gitlab.com
+  ## with your own domain name. You can copy and repeat that command if you have
+  ## more than one server to connect to.
+  ##
+  # 掃描 gitlab 位置的 ssh key
+  # 並輸出至 ~/.ssh/known_hosts
+  - ssh-keyscan gitlab.msslot.bet >> ~/.ssh/known_hosts
+  - chmod 644 ~/.ssh/known_hosts
 
-  # ##
-  # ## Use ssh-keyscan to scan the keys of your private server. Replace gitlab.com
-  # ## with your own domain name. You can copy and repeat that command if you have
-  # ## more than one server to connect to.
-  # ##
-  # # 掃描 gitlab 位置的 ssh key
-  # # 並輸出至 ~/.ssh/known_hosts
-  # - ssh-keyscan gitlab.msslot.bet >> ~/.ssh/known_hosts
+  ##
+  ## Alternatively, assuming you created the SSH_SERVER_HOSTKEYS variable
+  ## previously, uncomment the following two lines instead.
+  ##
+  # - echo "$SSH_SERVER_HOSTKEYS" > ~/.ssh/known_hosts
   # - chmod 644 ~/.ssh/known_hosts
 
-  # ##
-  # ## Alternatively, assuming you created the SSH_SERVER_HOSTKEYS variable
-  # ## previously, uncomment the following two lines instead.
-  # ##
-  # # - echo "$SSH_SERVER_HOSTKEYS" > ~/.ssh/known_hosts
-  # # - chmod 644 ~/.ssh/known_hosts
-
-  # # set git config
-  # - git config --global user.email "kaichiang@starcrown.asia"
-  # - git config --global user.name "Kai"
+  # set git config
+  - git config --global user.email "kaichiang@starcrown.asia"
+  - git config --global user.name "Kai"
 
 stages:
-  - update
   - deploy
 
-update-lib:
-  stage: update
+push-to-release:
+  stage: deploy
+  only:
+    - web
+
   script:
-    - mkdir -p dist
-    - curl --location --output $LIB_NAME.zip --header "JOB-TOKEN:$CI_JOB_TOKEN" "http://gitlab.msslot.bet/api/v4/projects/$LIB_REPO_ID/jobs/artifacts/master/download?job=add-md5"
-    - unzip $LIB_NAME.zip
-    - mv $LIB_NAME dist/$LIB_NAME
-
-  artifacts:
-    paths:
-      - dist
-
-update-game-info:
-  stage: update
-  script:
-    - ls
-    - mkdir -p dist
-    - curl --location --output $GAME_INFO_NAME.zip --header "JOB-TOKEN:$CI_JOB_TOKEN" "http://gitlab.msslot.bet/api/v4/projects/$GAMEINFO_REPO_ID/jobs/artifacts/master/download?job=build"
-    - unzip $GAME_INFO_NAME.zip
-    - mv $GAME_INFO_NAME dist/$GAME_INFO_NAME
-
-  artifacts:
-    paths:
-      - dist
-
-update-game-result:
-  stage: update
-  script:
-    - mkdir -p dist
-    - curl --location --output $GAME_RESULT_NAME.zip --header "JOB-TOKEN:$CI_JOB_TOKEN" "http://gitlab.msslot.bet/api/v4/projects/$GAMERESULT_REPO_ID/jobs/artifacts/master/download?job=build"
-    - unzip $GAME_RESULT_NAME.zip
-    - mv $GAME_RESULT_NAME dist/$GAME_RESULT_NAME
-
-  artifacts:
-    paths:
-      - dist
-
-#   # only:
-#   #   - web
-#   artifacts:
-#     paths:
-#       - dist
-#     name: GameCommon
-
-# deploy:
-#   stage: deploy
-#   script:
-#     - git clone git@gitlab.msslot.bet:release/gamecommon.git dist
-#     # 移除所有 dist 下的檔案
-#     - rm -rf dist/*
-#     # 把所有最後產出的檔案移至 dist
-#     - mv GameInfo dist/GameInfo; mv GameResult dist/GameResult; mv img dist/img; mv js dist/js; mv Lib dist/Lib
-#     ## 移至輸出目錄
-#     ## 並讀取目前的 commit 紀錄
-#     - cd dist
-#     - git add .
-#     - git commit -am "$CI_COMMIT_MESSAGE"
-#     - git push origin master
+    - git clone $RELEASE_GAME_COMMON dist
+    # 移除所有 dist 下的檔案
+    - rm -rf dist/*
+    # 把所有最後產出的檔案移至 dist
+    - mv GameInfo dist/GameInfo; mv GameResult dist/GameResult; mv img dist/img; mv js dist/js; mv Lib dist/Lib
+    - COMMIT_LOG='LOG:='$CI_COMMIT_SHORT_SHA''
+    - echo $LOG; echo $COMMIT_LOG
+    - cd dist
+    - git add .
+    - git commit -m '$COMMIT_LOG'
+    - git push origin master
