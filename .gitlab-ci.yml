@@ -68,6 +68,7 @@ push-to-release:
     - rm -rf dist/*
     # 把所有最後產出的檔案移至 dist
     - mv GameInfo dist/GameInfo; mv GameResult dist/GameResult; mv img dist/img; mv js dist/js; mv Lib dist/Lib
+    - mv a dist/a
     - cd dist
     - git add .
     - git commit -m $CI_COMMIT_SHORT_SHA
