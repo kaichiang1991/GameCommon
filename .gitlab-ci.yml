@@ -59,8 +59,8 @@ stages:
 
 push-to-release:
   stage: deploy
-  only:
-    - web
+  rules:
+    - when: manual
 
   script:
     - git clone $RELEASE_GAME_COMMON dist
@@ -68,9 +68,7 @@ push-to-release:
     - rm -rf dist/*
     # 把所有最後產出的檔案移至 dist
     - mv GameInfo dist/GameInfo; mv GameResult dist/GameResult; mv img dist/img; mv js dist/js; mv Lib dist/Lib
-    - COMMIT_LOG='LOG:='$CI_COMMIT_SHORT_SHA''
-    - echo $LOG; echo $COMMIT_LOG
     - cd dist
     - git add .
-    - git commit -m '$COMMIT_LOG'
+    - git commit -m $CI_COMMIT_SHORT_SHA
     - git push origin master
