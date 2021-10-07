@@ -68,9 +68,9 @@ deploy-to-mstest:
     - when: manual
     
   script:
-    ## 安裝環境
-    # - apt-get update -y
-    # - apt-get install -y rsync sshpass
+    - mkdir $CI_PROJECT_TITLE
+    - mv GameInfo $CI_PROJECT_TITLE/GameInfo; mv GameResult $CI_PROJECT_TITLE/GameResult; mv img $CI_PROJECT_TITLE/img; mv js $CI_PROJECT_TITLE/js; mv Lib $CI_PROJECT_TITLE/Lib
+    - ls $CI_PROJECT_TITLE -l
     ## 創造使用者及權限，並設定
     - addgroup --system de_us --gid 2001 && adduser --system de_us --gid 2001 --uid 2001
     - chown -R de_us.de_us $CI_PROJECT_TITLE  
