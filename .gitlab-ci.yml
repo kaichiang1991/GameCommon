@@ -68,7 +68,7 @@ deploy-to-mstest:
     - when: manual
     
   script:
-    - apt-get update -y && apt-get install openssh-client -y
+    - apt-get update -y && apt-get install sshpass rsync -y
     - mkdir $CI_PROJECT_TITLE
     - mv GameInfo $CI_PROJECT_TITLE/GameInfo; mv GameResult $CI_PROJECT_TITLE/GameResult; mv img $CI_PROJECT_TITLE/img; mv js $CI_PROJECT_TITLE/js; mv Lib $CI_PROJECT_TITLE/Lib
     - ls $CI_PROJECT_TITLE -l
