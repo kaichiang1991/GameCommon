@@ -9,7 +9,7 @@ before_script:
   ## (change apt-get to yum if you use an RPM-based image)
   ##
   # 安裝 ssh-agent
-  - 'command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client rsync sshpass -y )'
+  - 'command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )'
   ##
   ## Run ssh-agent (inside the build environment)
   ##
@@ -68,6 +68,7 @@ deploy-to-mstest:
     - when: manual
     
   script:
+    - apt-get update -y && apt-get install openssh-client -y
     - mkdir $CI_PROJECT_TITLE
     - mv GameInfo $CI_PROJECT_TITLE/GameInfo; mv GameResult $CI_PROJECT_TITLE/GameResult; mv img $CI_PROJECT_TITLE/img; mv js $CI_PROJECT_TITLE/js; mv Lib $CI_PROJECT_TITLE/Lib
     - ls $CI_PROJECT_TITLE -l
